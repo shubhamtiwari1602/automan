@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assembly Line Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Car Manufacturing Assembly Line</h1>
+            <div class="control-panel">
+                <div class="control-column">
+                    <h3>Simulation Controls</h3>
+                    <button id="simulateBtn" class="primary-btn">Run Simulation</button>
+                    <div class="slider-container">
+                        <label for="speedSlider">Master Simulation Speed</label>
+                        <input type="range" id="speedSlider" min="1" max="10" value="5">
+                        <span id="speedValue">5x</span>
+                    </div>
+                    
+                    <h4>Flow Rate Thresholds</h4>
+                    <div class="threshold-controls">
+                        <div class="slider-container">
+                            <label for="upperThreshold">Upper Threshold (parts/min)</label>
+                            <input type="range" id="upperThreshold" min="1" max="20" value="12" step="0.5">
+                            <span id="upperThresholdValue">12.0</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="lowerThreshold">Lower Threshold (parts/min)</label>
+                            <input type="range" id="lowerThreshold" min="0.5" max="10" value="4" step="0.5">
+                            <span id="lowerThresholdValue">4.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-column">
+                    <h3>Flow Rate Monitor</h3>
+                    <div class="flow-rate-gauges">
+                        <div class="flow-gauge" id="chassis-gauge">
+                            <span class="gauge-label">Chassis</span>
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" id="chassis-fill"></div>
+                            </div>
+                            <span class="gauge-value" id="chassis-rate">0 parts/min</span>
+                        </div>
+                        <div class="flow-gauge" id="engine-gauge">
+                            <span class="gauge-label">Engine</span>
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" id="engine-fill"></div>
+                            </div>
+                            <span class="gauge-value" id="engine-rate">0 parts/min</span>
+                        </div>
+                        <div class="flow-gauge" id="body-gauge">
+                            <span class="gauge-label">Body</span>
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" id="body-fill"></div>
+                            </div>
+                            <span class="gauge-value" id="body-rate">0 parts/min</span>
+                        </div>
+                        <div class="flow-gauge" id="interior-gauge">
+                            <span class="gauge-label">Interior</span>
+                            <div class="gauge-bar">
+                                <div class="gauge-fill" id="interior-fill"></div>
+                            </div>
+                            <span class="gauge-value" id="interior-rate">0 parts/min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="simulation-container">
+            <div class="rfid-status">
+                <h3>RFID System Status <span class="system-status-badge active">Active</span></h3>
+                <div class="rfid-indicators">
+                    <div class="rfid-indicator" id="rfid-chassis">
+                        <span class="rfid-label">Chassis RFID</span>
+                        <span class="rfid-state">Idle</span>
+                        <div class="data-counter">0 readings</div>
+                    </div>
+                    <div class="rfid-indicator" id="rfid-engine">
+                        <span class="rfid-label">Engine RFID</span>
+                        <span class="rfid-state">Idle</span>
+                        <div class="data-counter">0 readings</div>
+                    </div>
+                    <div class="rfid-indicator" id="rfid-body">
+                        <span class="rfid-label">Body RFID</span>
+                        <span class="rfid-state">Idle</span>
+                        <div class="data-counter">0 readings</div>
+                    </div>
+                    <div class="rfid-indicator" id="rfid-interior">
+                        <span class="rfid-label">Interior RFID</span>
+                        <span class="rfid-state">Idle</span>
+                        <div class="data-counter">0 readings</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-container">
+                <div id="graph" class="graph-container"></div>
+                
+                <div class="side-panel">
+                    <div class="red-flag-panel">
+                        <h3>Assembly Red Flags <span class="red-flag-counter">0</span></h3>
+                        <div id="red-flags"></div>
+                    </div>
+                    
+                    <div id="metrics"></div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <h3 id="legend-toggle">Legend</h3>
+                <div class="legend-content collapsed">
+                    <div class="legend-items">
+                        <div class="legend-item"><span class="color-box normal"></span> Normal operation</div>
+                        <div class="legend-item"><span class="color-box warning"></span> Warning</div>
+                        <div class="legend-item"><span class="color-box error"></span> Error</div>
+                        <div class="legend-item"><span class="color-box rfid"></span> RFID active</div>
+                    </div>
+                    <div class="legend-items">
+                        <div class="legend-item"><span class="symbol-box chassis"></span> Chassis</div>
+                        <div class="legend-item"><span class="symbol-box engine"></span> Engine</div>
+                        <div class="legend-item"><span class="symbol-box body"></span> Body</div>
+                        <div class="legend-item"><span class="symbol-box interior"></span> Interior</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load enhanced styles -->
+    <link rel="stylesheet" href="enhanced_style.css">
+    
+    <!-- Load scripts in order of dependencies -->
+    <script src="rfid.js"></script>
+    <!-- Load helpers first -->
+    <script src="animation-helpers.js"></script>
+    <script src="ui.js"></script>
+    <!-- Then load enhanced script -->
+    <script src="script_enhanced.js"></script>
+</body>
+</html>

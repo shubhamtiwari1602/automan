@@ -1,0 +1,282 @@
+/* Enhanced styles for automotive assembly simulation */
+.station-stats {
+    margin-top: 1.5rem;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.station-rate-item {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Animation effects */
+.welding-effect, .painting-effect, .assembly-effect, .testing-effect {
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+
+/* Improved conveyor paths */
+.conveyor-path {
+    stroke-dasharray: 5,5;
+    animation: conveyor-dash 3s linear infinite;
+}
+
+@keyframes conveyor-dash {
+    to {
+        stroke-dashoffset: -50;
+    }
+}
+
+/* RFID checkpoint pulse effect - completely removed */
+.rfid-pulse,
+.rfid-checkpoint-pulse {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Disable animation completely */
+.rfid-checkpoint .pulse,
+.rfid-checkpoint-pulse {
+    animation: none !important;
+}
+
+/* Fix legend position to make it a dropdown in corner */
+.legend {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.legend h3 {
+    margin: 0;
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.legend h3:hover {
+    background-color: rgba(48, 48, 48, 0.8);
+    color: white;
+    border-radius: 4px;
+}
+
+.legend h3::after {
+    content: "▼";
+    font-size: 0.8em;
+    margin-left: 8px;
+    transition: transform 0.3s;
+}
+
+.legend h3.collapsed::after {
+    transform: rotate(-90deg);
+}
+
+.legend-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, visibility 0.3s ease, background 0.3s ease;
+    border-radius: 0 0 4px 4px;
+    visibility: hidden;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.legend-content:not(.collapsed) {
+    max-height: 200px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    overflow: auto;
+    background: rgba(48, 48, 48, 0.8);
+    color: white;
+    border-radius: 4px;
+    margin-top: 5px;
+    visibility: visible;
+    transition: all 0.3s ease;
+}
+
+/* Fix for white rectangular background on legend */
+.legend-content.collapsed {
+    display: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Particle animations */
+@keyframes moveAlongPath {
+    from { offset-distance: 0%; }
+    to { offset-distance: 100%; }
+}
+
+.part-particle {
+    offset-rotate: 0deg;
+}
+
+/* Responsive layout fixes */
+@media (max-width: 992px) {
+    .legend {
+        bottom: 10px;
+        right: 10px;
+        transform: scale(0.9);
+    }
+    
+    .rfid-module {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Fix for interior RFID module being covered */
+#rfid-interior {
+    z-index: 100;
+    position: relative;
+}
+
+.rfid-module {
+    margin-bottom: 1rem;
+}
+
+/* Improved flow rate monitor */
+.gauge-container {
+    margin-bottom: 1rem;
+}
+
+.gauge-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gauge-status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6c757d;
+    margin-left: 0.5rem;
+}
+
+.gauge-status-indicator.error {
+    background: var(--error);
+}
+
+.gauge-status-indicator.warning {
+    background: var(--warning);
+}
+
+/* Ensure SVG is responsive */
+#graph svg {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+}
+
+/* Adding basic keyframes for browsers without full support */
+@keyframes pulseFade {
+    0% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 0; transform: scale(2); }
+}
+
+/* Improve text visibility in the visualization */
+#graph text {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Make sure station text is always visible */
+.station-text {
+    fill: white;
+    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    paint-order: stroke;
+    stroke: #000;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Add contrast for text against dark backgrounds */
+.red-flag-message, .metric-item strong {
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Make sure section titles are visible */
+#graph .section-title {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #495057;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+}
+
+/* Threshold line styles */
+.threshold-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    pointer-events: none;
+    transition: right 0.3s ease-out;
+}
+
+.threshold-line.upper {
+    background-color: var(--error, #e74c3c);
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+}
+
+.threshold-line.lower {
+    background-color: var(--warning, #f39c12);
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+}
+
+/* Threshold value display enhancement */
+.threshold-info {
+    font-size: 0.85em;
+    color: #666;
+    transition: color 0.3s;
+}
+
+/* Gauge fill transition */
+.gauge-fill {
+    transition: width 0.3s ease-out, background-color 0.3s ease-out;
+}
+
+/* Slider feedback */
+#upperThreshold:focus, #lowerThreshold:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.7);
+}
+
+#upperThreshold:active {
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.7);
+}
+
+#lowerThreshold:active {
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.7);
+}
+
+/* Flow indicator styles */
+.flow-indicator {
+  filter: drop-shadow(0 0 3px rgba(0,0,0,0.3));
+}
+
+.flow-indicator.error {
+  filter: drop-shadow(0 0 5px rgba(231, 76, 60, 0.7));
+}
+
+.flow-indicator.warning {
+  filter: drop-shadow(0 0 5px rgba(243, 156, 18, 0.7));
+}

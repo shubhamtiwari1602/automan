@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug</title>
+    <script>
+        function checkScript() {
+            console.log("Script loading test");
+            document.getElementById('result').innerText = 'Scripts are loading correctly';
+        }
+    </script>
+</head>
+<body onload="checkScript()">
+    <h1>Debug Test</h1>
+    <div id="result">If you don't see any text here, scripts are not executing properly</div>
+</body>
+</html>
